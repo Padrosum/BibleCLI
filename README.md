@@ -13,9 +13,9 @@ Komut Arayüzü ile Bible okuma.
 
 ```
 git clone https://github.com/Padrosum/Bcli
-
 git clone https://github.com/aruljohn/Bible-kjv/
 mv Bible-kjv/* Bcli/
+rm -rf Bible-kjv
 cd Bcli
 chmod +x ./*.sh
 bash *.sh
