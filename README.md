@@ -1,9 +1,10 @@
-# POGKS — Podman Ghost Kurulum Scripti
+# Bcli
 
-Basit ve hızlı: Bu repo, Podman kullanarak Ghost blog'unu container içinde çalıştırmak için bir kurulum scripti içerir.
+Komut Arayüzü ile Bible okuma.
 
 ## Gereksinimler
-- Podman
+- JQ
+- Script'in okuyabileceği formatta bulunan .json dosyaları. (aruljohn/Bible-kjv özel teşekkür)
 - Bash Shell
 - İnternet bağlantısı
 - Yeterli disk alanı
@@ -20,21 +21,13 @@ chmod +x ./*.sh
 bash *.sh
 ```
 
-## Yönetim
-- Log: podman logs <site-adı>  
-- Durdur: podman stop <site-adı>  
-- Başlat: podman start <site-adı>  
-- Sil: podman rm -f <site-adı>
-
-## Kaldırma
-- Container: podman rm -f <site-adı>
-
 ## Sorumluluk reddi
 Bu script "olduğu gibi" sağlanır. Repo sahibi veya yazanlar script kullanımından doğan hiçbir zarardan sorumlu değildir. Çalıştırmadan önce içeriği inceleyin ve üretimde kullanmadan önce test edin.
 
 ## Katkı & İletişim
 Hata veya öneri için: https://github.com/Padrosum/POGKS/issues  
 Repo sahibi: Padrosum
+Json dosyalarının temini : aruljohn/Bible-kjv
 
 
 Gemini AI kullanılmıştır.
