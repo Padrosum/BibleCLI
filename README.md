@@ -26,7 +26,9 @@ Bu script "olduğu gibi" sağlanır. Repo sahibi veya yazanlar script kullanım�
 
 ## Katkı & İletişim
 Hata veya öneri için: https://github.com/Padrosum/POGKS/issues  
+
 Repo sahibi: Padrosum
+
 Json dosyalarının temini : aruljohn/Bible-kjv
 
 
