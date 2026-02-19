@@ -55,5 +55,5 @@ git clone https://github.com/aruljohn/Bible-kjv/
 mv Bible-kjv/* BibleCLI/
 rm -rf Bible-kjv
 cd BibleCLI
-chmod +x ./*.sh
-bash *.sh
+chmod +x biblecli
+./biblecli
