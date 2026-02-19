@@ -1,11 +1,10 @@
 #!/bin/bash
 
-# ==========================================
-# BIBLE CLI - Terminal Based Bible Reader
-# ==========================================
-
 # --- Ayarlar ve Renkler ---
 BIBLE_DIR="."
+CONFIG_DIR="$HOME/.config/bcli"
+BOOKMARKS_FILE="$CONFIG_DIR/bookmarks.txt"
+
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
@@ -19,110 +18,185 @@ NC='\033[0m' # No Color
 
 # --- İkonlar ---
 ICON_BOOK="📖"
-ICON_WARN="⚠️"
+ICON_WARN="⚠"
 ICON_ERROR="❌"
 ICON_SEARCH="🔍"
 ICON_LIST="📚"
+ICON_SAVE="💾"
+ICON_STAR="⭐"
 
-# --- Gereksinim Kontrolü ---
-if ! command -v jq &> /dev/null; then
-    echo -e "${RED}${ICON_ERROR} Hata:${NC} 'jq' paketi bulunamadı. Lütfen yükleyin."
-    exit 1
+# --- Gereksinim ve Dizin Kontrolü ---
+if ! command -v jq &>/dev/null; then
+  echo -e "${RED}${ICON_ERROR} Hata:${NC} 'jq' paketi bulunamadı. Lütfen yükleyin."
+  exit 1
 fi
+
+# Config dizinini oluştur (yoksa)
+mkdir -p "$CONFIG_DIR"
+touch "$BOOKMARKS_FILE"
 
 # --- Yardım Menüsü ---
 show_help() {
-    echo -e "${MAGENTA}╭──────────────────────────────────────────────────────────╮${NC}"
-    echo -e "${MAGENTA}│${NC}                 ${BOLD}${WHITE}${ICON_BOOK} B I B L E   C L I${NC}                    ${MAGENTA}│${NC}"
-    echo -e "${MAGENTA}╰──────────────────────────────────────────────────────────╯${NC}"
-    echo -e "${YELLOW}KULLANIM:${NC}"
-    echo -e "  $0 \"Kitap Adı\" [Bölüm] [Ayet]"
-    echo -e ""
-    echo -e "${YELLOW}ÖRNEKLER:${NC}"
-    echo -e "  $0 \"Genesis\" 1 1         ${DIM}# Tek bir ayet getirir${NC}"
-    echo -e "  $0 \"John\" 3              ${DIM}# Bir bölümün tüm ayetlerini listeler${NC}"
-    echo -e "  $0 --list                ${DIM}# Mevcut kitapların listesini gösterir${NC}"
-    echo -e ""
-    echo -e "${YELLOW}${ICON_WARN} NOT:${NC} Kitap adları boşluk içeriyorsa çift tırnak kullanın."
-    echo -e "${DIM}------------------------------------------------------------${NC}"
+  echo -e "${MAGENTA}╭──────────────────────────────────────────────────────────╮${NC}"
+  echo -e "${MAGENTA}│${NC}                 ${BOLD}${WHITE}${ICON_BOOK} B I B L E   C L I${NC}                    ${MAGENTA}│${NC}"
+  echo -e "${MAGENTA}╰──────────────────────────────────────────────────────────╯${NC}"
+  echo -e "${YELLOW}KULLANIM:${NC}"
+  echo -e "  $0 \"Kitap Adı\" [Bölüm] [Ayet] [--save]"
+  echo -e "  $0 [SEÇENEK]"
+  echo -e ""
+  echo -e "${YELLOW}SEÇENEKLER:${NC}"
+  echo -e "  -l, --list               ${DIM}Mevcut kitapların listesini gösterir${NC}"
+
+  echo -e "  -b, --bookmarks          ${DIM}Kaydedilen yer imlerini listeler${NC}"
+  echo -e ""
+  echo -e "${YELLOW}ÖRNEKLER:${NC}"
+  echo -e "  $0 \"Genesis\" 1 1         ${DIM}# Tek bir ayet getirir${NC}"
+  echo -e "  $0 \"Genesis\" 1 1 --save  ${DIM}# Ayeti yer imlerine kaydeder${NC}"
+
+  echo -e "${DIM}------------------------------------------------------------${NC}"
 }
 
 # --- Kitapları Listeleme ---
 list_books() {
-    echo -e "\n${BOLD}${CYAN}${ICON_LIST} Mevcut Kitap Listesi:${NC}\n"
-    # Sadece .json dosyalarını bul, uzantıyı sil ve düzenli sütun yap
-    find "$BIBLE_DIR" -maxdepth 1 -name "*.json" | sed 's|.*/||; s|\.json$||' | sort | column -c 80
-    echo ""
+  echo -e "\n${BOLD}${CYAN}${ICON_LIST} Mevcut Kitap Listesi:${NC}\n"
+  find "$BIBLE_DIR" -maxdepth 1 -name "*.json" | sed 's|.*/||; s|\.json$||' | sort | column -c 80
+  echo ""
 }
 
-# --- Ana Mantık ---
-
-# Parametre kontrolü
-if [[ $# -eq 0 ]] || [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]]; then
-    show_help
+# --- Yer İmlerini Gösterme ---
+show_bookmarks() {
+  if [ ! -s "$BOOKMARKS_FILE" ]; then
+    echo -e "\n${YELLOW}${ICON_WARN} Henüz kaydedilmiş bir yer imi bulunmuyor.${NC}\n"
     exit 0
+  fi
+  echo -e "\n${BOLD}${MAGENTA}${ICON_STAR} Kaydedilen Yer İmleri (${BOOKMARKS_FILE}):${NC}\n"
+  cat "$BOOKMARKS_FILE"
+  echo ""
+}
+
+# --- Global Arama (Search) ---
+search_word() {
+  local WORD="$1"
+  echo -e "\n${DIM}${ICON_SEARCH} Tüm kitaplarda '${BOLD}$WORD${DIM}' aranıyor... Bu işlem birkaç saniye sürebilir.${NC}\n"
+
+  local FOUND=0
+  for file in "$BIBLE_DIR"/*.json; do
+    [ -e "$file" ] || continue
+    book=$(basename "$file" .json)
+
+    # jq ile büyük/küçük harf duyarsız (case-insensitive) regex araması
+    jq -r --arg q "$WORD" --arg b "$book" '
+            .chapters[] | .chapter as $c | .verses[] | select(.text | test($q; "i")) |
+            "\($b) \($c):\(.verse)|\(.text)"
+        ' "$file" | while IFS='|' read -r ref text; do
+      if [[ -n "$ref" ]]; then
+        # Eşleşen kelimenin altını çizmek/renklendirmek için grep kullanıyoruz
+        highlighted_text=$(echo "$text" | grep --color=always -i "$WORD")
+        echo -e "${YELLOW}${BOLD}$ref${NC} ${CYAN}$highlighted_text${NC}"
+        FOUND=1
+      fi
+    done
+  done
+
+  if [ $FOUND -eq 0 ]; then
+    echo -e "${RED}${ICON_WARN} '${WORD}' kelimesi hiçbir kitapta bulunamadı.${NC}"
+  fi
+  echo ""
+}
+
+# --- Ana Parametre Kontrolü ---
+if [[ $# -eq 0 ]] || [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]]; then
+  show_help
+  exit 0
 fi
 
 if [[ "$1" == "--list" ]] || [[ "$1" == "-l" ]]; then
-    list_books
-    exit 0
+  list_books
+  exit 0
 fi
 
-# Girdileri al
+if [[ "$1" == "--bookmarks" ]] || [[ "$1" == "-b" ]]; then
+  show_bookmarks
+  exit 0
+fi
+
+if [[ "$1" == "--search" ]] || [[ "$1" == "-s" ]]; then
+  if [ -z "$2" ]; then
+    echo -e "${RED}${ICON_ERROR} Hata:${NC} Aranacak kelimeyi girmediniz. Örnek: $0 -s \"love\""
+    exit 1
+  fi
+  search_word "$2"
+  exit 0
+fi
+
+# Girdileri al (Okuma Modu)
 BOOK_INPUT="$1"
 CHAPTER="$2"
 VERSE="$3"
+SAVE_FLAG="$4"
+
 FILE="$BIBLE_DIR/$BOOK_INPUT.json"
 
-# Dosya kontrolü
 if [ ! -f "$FILE" ]; then
-    echo -e "${RED}${ICON_ERROR} Hata:${NC} '${BOLD}$BOOK_INPUT${NC}' kitabı bulunamadı."
-    echo -e "Kitap listesini görmek için: ${BOLD}$0 --list${NC}"
-    exit 1
+  echo -e "${RED}${ICON_ERROR} Hata:${NC} '${BOLD}$BOOK_INPUT${NC}' kitabı bulunamadı."
+  exit 1
 fi
 
-# Bölüm girilmiş mi kontrolü
 if [ -z "$CHAPTER" ]; then
-    echo -e "${RED}${ICON_WARN} Hata:${NC} Lütfen okumak istediğiniz bölümü belirtin."
-    echo -e "Örnek: ${BOLD}$0 \"$BOOK_INPUT\" 1${NC}"
-    exit 1
+  echo -e "${RED}${ICON_WARN} Hata:${NC} Lütfen okumak istediğiniz bölümü belirtin."
+  exit 1
 fi
-
-echo -e "${DIM}${ICON_SEARCH} Sorgulanıyor: $BOOK_INPUT $CHAPTER${VERSE:+:$VERSE}...${NC}"
 
 # JQ Sorgusu
-if [ -z "$VERSE" ]; then
-    # Sadece Bölüm Sorgusu: Ayet numarası ve metni '|' ile ayırıyoruz
-    RESULT=$(jq -r --arg CH "$CHAPTER" \
-        '.chapters[] | select(.chapter == $CH) | .verses[] | "\(.verse)| \(.text)"' \
-        "$FILE")
+if [ -z "$VERSE" ] || [ "$VERSE" == "--save" ]; then
+  # Eğer 3. argüman --save ise, bölümün tamamını istiyor demektir
+  if [ "$VERSE" == "--save" ]; then
+    SAVE_FLAG="--save"
+    VERSE=""
+  fi
+  RESULT=$(jq -r --arg CH "$CHAPTER" \
+    '.chapters[] | select(.chapter == $CH) | .verses[] | "\(.verse)| \(.text)"' \
+    "$FILE")
 else
-    # Tek Ayet Sorgusu
-    RESULT=$(jq -r --arg CH "$CHAPTER" --arg VS "$VERSE" \
-        '.chapters[] | select(.chapter == $CH) | .verses[] | select(.verse == $VS) | .text' \
-        "$FILE")
+  # Tek Ayet Sorgusu
+  RESULT=$(jq -r --arg CH "$CHAPTER" --arg VS "$VERSE" \
+    '.chapters[] | select(.chapter == $CH) | .verses[] | select(.verse == $VS) | .text' \
+    "$FILE")
 fi
 
-# Çıktı Kontrolü ve Renkli Yazdırma
+# Çıktı Kontrolü
 if [ -z "$RESULT" ] || [ "$RESULT" == "null" ]; then
-    echo -e "${RED}${ICON_ERROR} Hata:${NC} Belirtilen bölüm veya ayet bu kitapta mevcut değil."
-else
-    # Üst Bilgi Çubuğu
-    echo -e "\n${MAGENTA}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-    echo -e "${ICON_BOOK} ${BOLD}${WHITE}$BOOK_INPUT${NC} ${DIM}❯${NC} ${YELLOW}Bölüm $CHAPTER${NC}${VERSE:+ ${DIM}❯${NC} ${GREEN}Ayet $VERSE${NC}}"
-    echo -e "${MAGENTA}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}\n"
+  echo -e "${RED}${ICON_ERROR} Hata:${NC} Belirtilen bölüm veya ayet bu kitapta mevcut değil."
+  exit 1
+fi
 
-    # İçerik Yazdırma
-    if [ -z "$VERSE" ]; then
-        # Tüm bölümü satır satır okuyup ayet numaralarını renklendiriyoruz
-        echo "$RESULT" | while IFS='|' read -r v t; do
-            if [[ -n "$v" && -n "$t" ]]; then
-                echo -e "${YELLOW}${BOLD}$v${NC} ${CYAN}$t${NC}"
-            fi
-        done
-        echo ""
-    else
-        # Tek Ayet okuma
-        echo -e "${CYAN}$RESULT${NC}\n"
+# Terminale Yazdırma
+echo -e "\n${MAGENTA}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${ICON_BOOK} ${BOLD}${WHITE}$BOOK_INPUT${NC} ${DIM}❯${NC} ${YELLOW}Bölüm $CHAPTER${NC}${VERSE:+ ${DIM}❯${NC} ${GREEN}Ayet $VERSE${NC}}"
+echo -e "${MAGENTA}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}\n"
+
+if [ -z "$VERSE" ]; then
+  echo "$RESULT" | while IFS='|' read -r v t; do
+    if [[ -n "$v" && -n "$t" ]]; then
+      echo -e "${YELLOW}${BOLD}$v${NC} ${CYAN}$t${NC}"
     fi
+  done
+  echo ""
+else
+  echo -e "${CYAN}$RESULT${NC}\n"
+fi
+
+# Yer İmi Kaydetme Mantığı
+if [[ "$SAVE_FLAG" == "--save" ]]; then
+  if [ -z "$VERSE" ]; then
+    echo -e "${RED}${ICON_WARN} Uyarı:${NC} Sadece tekil ayetler yer imlerine eklenebilir. Tüm bölüm kaydedilemez."
+  else
+    # Ayetin zaten ekli olup olmadığını kontrol et
+    if grep -q "$BOOK_INPUT $CHAPTER:$VERSE" "$BOOKMARKS_FILE"; then
+      echo -e "${YELLOW}${ICON_WARN} Bu ayet zaten yer imlerinde kayıtlı.${NC}\n"
+    else
+      echo -e "${YELLOW}${BOLD}$BOOK_INPUT $CHAPTER:$VERSE${NC} - ${RESULT}" >>"$BOOKMARKS_FILE"
+      echo -e "${GREEN}${ICON_SAVE} Başarılı:${NC} Ayet ${BOLD}~/.config/bcli/bookmarks.txt${NC} konumuna kaydedildi.\n"
+    fi
+  fi
 fi
