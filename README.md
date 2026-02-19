@@ -1,4 +1,4 @@
-# Bcli
+# BibleCLI
 
 Komut Arayüzü ile Bible okuma.
 
