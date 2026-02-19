@@ -13,7 +13,7 @@ NC='\033[0m' # No Color
 # --- Yardım Menüsü ---
 show_help() {
     echo -e "${BOLD}${CYAN}╔══════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${BOLD}${CYAN}║            BIBLE CLI SEARCH TOOL - v2.0                  ║${NC}"
+    echo -e "${BOLD}${CYAN}║            BIBLE CLI                                     ║${NC}"
     echo -e "${BOLD}${CYAN}╚══════════════════════════════════════════════════════════╝${NC}"
     echo -e "${YELLOW}KULLANIM:${NC}"
     echo -e "  $0 \"Kitap Adı\" [Bölüm] [Ayet]"
