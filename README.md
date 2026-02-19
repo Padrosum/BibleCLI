@@ -1,46 +1,59 @@
-<div align="center">
+# 📖 BibleCLI
 
-<img src="https://via.placeholder.com/120x120?text=LOGO" alt="BibleCLI Logo" width="120" height="120"/>
+> Komut Arayüzü ile Bible okuma aracı. Terminalden ayrılmadan kutsal metinleri hızlıca arayın.
+> **Kodlayan:** [Padros](https://github.com/Padrosum)
 
-# BibleCLI
-**Kutsal metinler için ultra hızlı, terminal tabanlı okuyucu.**
+![Bash](https://img.shields.io/badge/Language-Bash-4EAA25?style=for-the-badge&logo=gnu-bash&logoColor=white)
+![JSON](https://img.shields.io/badge/Data-JSON-000000?style=for-the-badge&logo=json&logoColor=white)
+![Offline](https://img.shields.io/badge/Mode-Offline-00599C?style=for-the-badge)
 
-[![Bash](https://img.shields.io/badge/Script-Bash-4EAA25?style=for-the-badge&logo=gnu-bash&logoColor=white)]()
-[![JSON](https://img.shields.io/badge/Data-JSON-000000?style=for-the-badge&logo=json&logoColor=white)]()
-[![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)]()
+---
 
-</div>
+## 📖 Nedir?
 
-<br>
+**BibleCLI**, terminalinizden çıkmadan kutsal metinleri **hızlı**, **renkli** ve **çevrimdışı** olarak okumanızı sağlayan basit bir Bash scriptidir.
 
-<div align="center">
-  <img src="https://via.placeholder.com/800x400?text=Terminal+Ekran+Görüntüsü+Buraya+Gelecek" alt="BibleCLI Terminal Görünümü" width="100%"/>
-</div>
+JSON tabanlı yerel veri setini `jq` aracılığıyla işler ve sonuçları (tek bir ayet, tüm bölüm veya mevcut kitap listesi) doğrudan terminalinizde estetik bir şekilde render eder.
 
-## 🚀 Proje Hakkında
+### ✨ Özellikler
 
-**BibleCLI**, Linux topluluğu için geliştirilmiş minimalist bir komut satırı aracıdır. Yerel JSON dosyalarını `jq` gücüyle işleyerek, internet bağlantısına ihtiyaç duymadan milisaniyeler içinde aradığınız metni terminalinize getirir. Geliştirme yaparken veya terminalde çalışırken odaklanmayı bozmadan hızlıca okuma yapmanızı sağlar.
+* 🚀 **Işık Hızında:** JSON tabanlı yerel veritabanı sayesinde anında sonuç.
+* 🎨 **Renkli Arayüz:** Okumayı kolaylaştıran, göz yormayan ANSI renk paleti.
+* 🔍 **Esnek Sorgulama:** İster tek bir ayet, ister koca bir bölümü argüman vererek okuma.
+* 📦 **Çevrimdışı Çalışma:** Kurulumdan sonra internet bağlantısına ihtiyaç duymaz.
 
-## ✨ Neler Sunuyor?
+---
 
-* ⚡ **Sıfır Gecikme:** Karmaşık veritabanları veya API beklemeleri yok.
-* 🎨 **Sade Arayüz:** Göz yormayan, okumayı kolaylaştıran terminal renkleri.
-* 🔍 **Nokta Atışı Sorgu:** Kitap, bölüm veya ayet bazında hassas filtreleme.
-* 💻 **Tamamen Çevrimdışı:** Bir kez kurun, her zaman yanınızda olsun.
+## ⚠️ Sorumluluk Reddi (Disclaimer)
+
+Bu script "olduğu gibi" sağlanır. 
+
+* Repo sahibi veya yazanlar script kullanımından doğan hiçbir zarardan sorumlu değildir. 
+* Çalıştırmadan önce içeriği inceleyin ve üretimde kullanmadan önce test edin.
+
+---
+
+## 🛠️ Gereksinimler (Dependencies)
+
+Bu aracı kullanabilmek için aşağıdaki araçların ve dosyaların sisteminizde olması gerekir:
+
+* `jq` (JSON verilerini okumak için)
+* `bash` (Script motoru)
+* Yeterli disk alanı
+* İnternet bağlantısı *(Sadece ilk kurulumda repoları çekmek için)*
+* Script'in okuyabileceği formatta bulunan `.json` dosyaları. *(JSON veritabanı için **aruljohn/Bible-kjv**'ye özel teşekkürler)*
 
 ---
 
 ## ⚙️ Kurulum
 
-Sadece birkaç saniye içinde sisteminize entegre edebilirsiniz. *(Sisteminizde `jq` yüklü olduğundan emin olun).*
+Aşağıdaki komutlarla repoyu, JSON dosyalarını indirip scripti anında çalıştırılabilir hale getirebilirsiniz:
 
 ```bash
-# 1. Repoyu klonlayın ve dizine girin
-git clone [https://github.com/Padrosum/Bcli.git](https://github.com/Padrosum/Bcli.git) && cd Bcli
-
-# 2. JSON veri setini indirin ve ana dizine çıkarın
-git clone [https://github.com/aruljohn/Bible-kjv/](https://github.com/aruljohn/Bible-kjv/) temp_data
-mv temp_data/*.json . && rm -rf temp_data
-
-# 3. Çalıştırma yetkisi verin
-chmod +x *.sh
+git clone [https://github.com/Padrosum/Bcli](https://github.com/Padrosum/Bcli)
+git clone [https://github.com/aruljohn/Bible-kjv/](https://github.com/aruljohn/Bible-kjv/)
+mv Bible-kjv/* Bcli/
+rm -rf Bible-kjv
+cd Bcli
+chmod +x ./*.sh
+bash *.sh
