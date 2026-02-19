@@ -1,83 +1,46 @@
-📖 BibleCLI
+<div align="center">
 
-BibleCLI, kutsal metinleri terminalinden ayrılmadan, hızlı ve renkli bir şekilde okumanı sağlayan minimalist bir Bash aracıdır. Hafiftir, bağımlılığı azdır ve tamamen terminal dostudur.
+<img src="https://via.placeholder.com/120x120?text=LOGO" alt="BibleCLI Logo" width="120" height="120"/>
 
-    "Terminalde ışık olsun." — Bir Linux Kullanıcısı
+# BibleCLI
+**Kutsal metinler için ultra hızlı, terminal tabanlı okuyucu.**
 
-✨ Özellikler
+[![Bash](https://img.shields.io/badge/Script-Bash-4EAA25?style=for-the-badge&logo=gnu-bash&logoColor=white)]()
+[![JSON](https://img.shields.io/badge/Data-JSON-000000?style=for-the-badge&logo=json&logoColor=white)]()
+[![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)]()
 
-    🚀 Işık Hızında: JSON tabanlı yerel veritabanı sayesinde anında sonuç.
+</div>
 
-    🎨 Renkli Arayüz: Okumayı kolaylaştıran, göz yormayan ANSI renk paleti.
+<br>
 
-    🔍 Esnek Sorgulama: İster tek bir ayet, ister koca bir bölüm.
+<div align="center">
+  <img src="https://via.placeholder.com/800x400?text=Terminal+Ekran+Görüntüsü+Buraya+Gelecek" alt="BibleCLI Terminal Görünümü" width="100%"/>
+</div>
 
-    📦 Çevrimdışı Çalışma: Kurulumdan sonra internet bağlantısı gerektirmez.
+## 🚀 Proje Hakkında
 
-    📜 Kitap Listeleme: Mevcut tüm kitapları sütunlar halinde görebilme.
+**BibleCLI**, Linux topluluğu için geliştirilmiş minimalist bir komut satırı aracıdır. Yerel JSON dosyalarını `jq` gücüyle işleyerek, internet bağlantısına ihtiyaç duymadan milisaniyeler içinde aradığınız metni terminalinize getirir. Geliştirme yaparken veya terminalde çalışırken odaklanmayı bozmadan hızlıca okuma yapmanızı sağlar.
 
-🛠️ Gereksinimler
+## ✨ Neler Sunuyor?
 
-Çalıştırmadan önce şu araçların sisteminizde yüklü olduğundan emin olun:
+* ⚡ **Sıfır Gecikme:** Karmaşık veritabanları veya API beklemeleri yok.
+* 🎨 **Sade Arayüz:** Göz yormayan, okumayı kolaylaştıran terminal renkleri.
+* 🔍 **Nokta Atışı Sorgu:** Kitap, bölüm veya ayet bazında hassas filtreleme.
+* 💻 **Tamamen Çevrimdışı:** Bir kez kurun, her zaman yanınızda olsun.
 
-    bash: Temel kabuk.
+---
 
-    jq: JSON verilerini işlemek için işlemci (Genelde sudo apt install jq ile kurulur).
+## ⚙️ Kurulum
 
-    column: Çıktıları düzenli göstermek için (Çoğu dağıtımda hazır gelir).
+Sadece birkaç saniye içinde sisteminize entegre edebilirsiniz. *(Sisteminizde `jq` yüklü olduğundan emin olun).*
 
-🚀 Kurulum & Hızlı Başlangıç
+```bash
+# 1. Repoyu klonlayın ve dizine girin
+git clone [https://github.com/Padrosum/Bcli.git](https://github.com/Padrosum/Bcli.git) && cd Bcli
 
-Aşağıdaki komutları terminaline kopyalayarak BibleCLI'yı ve veri setini anında kurabilirsin:
-Bash
+# 2. JSON veri setini indirin ve ana dizine çıkarın
+git clone [https://github.com/aruljohn/Bible-kjv/](https://github.com/aruljohn/Bible-kjv/) temp_data
+mv temp_data/*.json . && rm -rf temp_data
 
-# Repoyu klonla
-git clone https://github.com/Padrosum/Bcli.git
-cd Bcli
-
-# Bible veri setini dahil et (aruljohn/Bible-kjv)
-git clone https://github.com/aruljohn/Bible-kjv/ temp_data
-mv temp_data/*.json .
-rm -rf temp_data
-
-# Çalıştırma izni ver
-chmod +x bible.sh
-
-📖 Kullanım Kılavuzu
-
-Scripti ./bible.sh komutuyla çalıştırabilirsiniz.
-1. Kitapları Listele
-
-Hangi kitapların mevcut olduğunu görmek için:
-Bash
-
-./bible.sh --list
-
-2. Tek Bir Ayet Getir
-
-Kitap adı, Bölüm ve Ayet numarasını girin:
-Bash
-
-./bible.sh "Genesis" 1 1
-
-3. Tüm Bir Bölümü Oku
-
-Sadece kitap adı ve bölüm numarasını girin:
-Bash
-
-./bible.sh "John" 3
-
-    İpucu: Kitap adı boşluk içeriyorsa (örn: "1 John") mutlaka çift tırnak içinde yazın.
-
-🛡️ Sorumluluk Reddi (Disclaimer)
-
-Bu script "olduğu gibi" (as-is) sağlanmıştır. Yazılımın kullanımından doğabilecek (terminal bağımlılığı veya ruhani aydınlanma gibi) durumlardan geliştirici sorumlu tutulamaz. Üretim ortamlarında kullanmadan önce test ediniz.
-🤝 Katkı & İletişim
-
-Hataları bildirmek veya yeni özellikler önermek için Issues kısmını kullanabilirsiniz.
-
-    Geliştirici: Padrosum
-
-    Veri Sağlayıcı: aruljohn/Bible-kjv
-
-    Destek: Gemini AI ile modernize edilmiştir.
+# 3. Çalıştırma yetkisi verin
+chmod +x *.sh
