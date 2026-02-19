@@ -1,35 +1,83 @@
-# BibleCLI
+📖 BibleCLI
 
-Komut Arayüzü ile Bible okuma.
+BibleCLI, kutsal metinleri terminalinden ayrılmadan, hızlı ve renkli bir şekilde okumanı sağlayan minimalist bir Bash aracıdır. Hafiftir, bağımlılığı azdır ve tamamen terminal dostudur.
 
-## Gereksinimler
-- JQ
-- Script'in okuyabileceği formatta bulunan .json dosyaları. (aruljohn/Bible-kjv özel teşekkür)
-- Bash Shell
-- İnternet bağlantısı
-- Yeterli disk alanı
+    "Terminalde ışık olsun." — Bir Linux Kullanıcısı
 
-## kurulum
+✨ Özellikler
 
-```
-git clone https://github.com/Padrosum/Bcli
-git clone https://github.com/aruljohn/Bible-kjv/
-mv Bible-kjv/* Bcli/
-rm -rf Bible-kjv
+    🚀 Işık Hızında: JSON tabanlı yerel veritabanı sayesinde anında sonuç.
+
+    🎨 Renkli Arayüz: Okumayı kolaylaştıran, göz yormayan ANSI renk paleti.
+
+    🔍 Esnek Sorgulama: İster tek bir ayet, ister koca bir bölüm.
+
+    📦 Çevrimdışı Çalışma: Kurulumdan sonra internet bağlantısı gerektirmez.
+
+    📜 Kitap Listeleme: Mevcut tüm kitapları sütunlar halinde görebilme.
+
+🛠️ Gereksinimler
+
+Çalıştırmadan önce şu araçların sisteminizde yüklü olduğundan emin olun:
+
+    bash: Temel kabuk.
+
+    jq: JSON verilerini işlemek için işlemci (Genelde sudo apt install jq ile kurulur).
+
+    column: Çıktıları düzenli göstermek için (Çoğu dağıtımda hazır gelir).
+
+🚀 Kurulum & Hızlı Başlangıç
+
+Aşağıdaki komutları terminaline kopyalayarak BibleCLI'yı ve veri setini anında kurabilirsin:
+Bash
+
+# Repoyu klonla
+git clone https://github.com/Padrosum/Bcli.git
 cd Bcli
-chmod +x ./*.sh
-bash *.sh
-```
 
-## Sorumluluk reddi
-Bu script "olduğu gibi" sağlanır. Repo sahibi veya yazanlar script kullanımından doğan hiçbir zarardan sorumlu değildir. Çalıştırmadan önce içeriği inceleyin ve üretimde kullanmadan önce test edin.
+# Bible veri setini dahil et (aruljohn/Bible-kjv)
+git clone https://github.com/aruljohn/Bible-kjv/ temp_data
+mv temp_data/*.json .
+rm -rf temp_data
 
-## Katkı & İletişim
-Hata veya öneri için: https://github.com/Padrosum/POGKS/issues  
+# Çalıştırma izni ver
+chmod +x bible.sh
 
-Repo sahibi: Padrosum
+📖 Kullanım Kılavuzu
 
-Json dosyalarının temini : aruljohn/Bible-kjv
+Scripti ./bible.sh komutuyla çalıştırabilirsiniz.
+1. Kitapları Listele
 
+Hangi kitapların mevcut olduğunu görmek için:
+Bash
 
-Gemini AI kullanılmıştır.
+./bible.sh --list
+
+2. Tek Bir Ayet Getir
+
+Kitap adı, Bölüm ve Ayet numarasını girin:
+Bash
+
+./bible.sh "Genesis" 1 1
+
+3. Tüm Bir Bölümü Oku
+
+Sadece kitap adı ve bölüm numarasını girin:
+Bash
+
+./bible.sh "John" 3
+
+    İpucu: Kitap adı boşluk içeriyorsa (örn: "1 John") mutlaka çift tırnak içinde yazın.
+
+🛡️ Sorumluluk Reddi (Disclaimer)
+
+Bu script "olduğu gibi" (as-is) sağlanmıştır. Yazılımın kullanımından doğabilecek (terminal bağımlılığı veya ruhani aydınlanma gibi) durumlardan geliştirici sorumlu tutulamaz. Üretim ortamlarında kullanmadan önce test ediniz.
+🤝 Katkı & İletişim
+
+Hataları bildirmek veya yeni özellikler önermek için Issues kısmını kullanabilirsiniz.
+
+    Geliştirici: Padrosum
+
+    Veri Sağlayıcı: aruljohn/Bible-kjv
+
+    Destek: Gemini AI ile modernize edilmiştir.
