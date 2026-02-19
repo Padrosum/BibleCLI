@@ -50,10 +50,10 @@ Bu aracı kullanabilmek için aşağıdaki araçların ve dosyaların sisteminiz
 Aşağıdaki komutlarla repoyu, JSON dosyalarını indirip scripti anında çalıştırılabilir hale getirebilirsiniz:
 
 ```bash
-git clone [https://github.com/Padrosum/Bcli](https://github.com/Padrosum/Bcli)
+git clone [https://github.com/Padrosum/BibleCLI](https://github.com/Padrosum/BibleCLI)
 git clone [https://github.com/aruljohn/Bible-kjv/](https://github.com/aruljohn/Bible-kjv/)
-mv Bible-kjv/* Bcli/
+mv Bible-kjv/* BibleCLI/
 rm -rf Bible-kjv
-cd Bcli
+cd BibleCLI
 chmod +x ./*.sh
 bash *.sh
