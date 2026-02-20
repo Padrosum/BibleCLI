@@ -9,6 +9,8 @@
 
 ---
 
+![BibleCLI Banner](banner.png)
+
 ## 📖 Nedir?
 
 **BibleCLI**, terminalinizden çıkmadan kutsal metinleri **hızlı**, **renkli** ve **çevrimdışı** olarak okumanızı sağlayan basit bir Bash scriptidir.
